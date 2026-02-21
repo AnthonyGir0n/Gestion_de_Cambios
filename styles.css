@@ -79,7 +79,7 @@ body {
 
 /* === STEPPER (ASISTENTE ANIMADO) === */
 .stepper { display: flex; justify-content: space-between; padding: 1.5rem 2rem; background: #fafbfc; border-bottom: 2px solid var(--border); }
-.step-indicator { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; transition: var(--transition); }
+.step-indicator { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; transition: var(--transition); text-align: center; }
 .step-indicator::after { content: ''; position: absolute; top: 18px; left: 50%; width: 100%; height: 3px; background: var(--border); z-index: 1; transition: var(--transition); }
 .step-indicator:last-child::after { display: none; }
 .step-circle { width: 38px; height: 38px; border-radius: 50%; background: white; border: 3px solid var(--border); display: flex; align-items: center; justify-content: center; z-index: 2; margin-bottom: 8px; transition: var(--transition); font-weight: bold; }
@@ -96,7 +96,7 @@ body {
 .step-pane.active { display: block; opacity: 1; transform: translateX(0); animation: slideIn 0.5s ease forwards; }
 @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-.section-title { font-size: 1.3rem; color: var(--umg-blue); margin-top: 0; border-bottom: 2px solid var(--umg-gold); padding-bottom: 0.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+.section-title { font-size: 1.3rem; color: var(--umg-blue); margin-top: 0; border-bottom: 2px solid var(--umg-gold); padding-bottom: 0.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; font-weight: 700; flex-wrap: wrap; gap: 10px; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 
@@ -114,17 +114,48 @@ textarea { resize: vertical; min-height: 100px; }
 .risk-high { background: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
 
 /* === BOTONES === */
-.actions { display: flex; justify-content: space-between; padding: 1.5rem 2rem; background: #f4f6f9; border-top: 1px solid var(--border); }
-.btn { padding: 0.8rem 1.8rem; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: var(--transition); }
+.actions { display: flex; justify-content: space-between; padding: 1.5rem 2rem; background: #f4f6f9; border-top: 1px solid var(--border); gap: 15px; }
+.btn { padding: 0.8rem 1.8rem; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: var(--transition); text-align: center; justify-content: center; }
 .btn-prev { background: white; border: 2px solid var(--border); color: var(--text-main); }
 .btn-prev:hover { background: #e2e6ea; border-color: #dae0e5; transform: translateY(-2px); }
 .btn-next { background: var(--umg-blue); color: white; box-shadow: 0 4px 10px rgba(0, 43, 92, 0.3); }
 .btn-next:hover { background: var(--umg-blue-light); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 43, 92, 0.4); }
-.btn-success { background: var(--umg-gold); color: var(--umg-blue); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3); }
+.btn-success { background: var(--umg-gold); color: var(--umg-blue); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3); width: auto; }
 .btn-success:hover { background: var(--umg-gold-hover); transform: translateY(-2px); }
 
+/* Elementos de PDF ocultos en web */
 .print-header { display: none; }
 .print-signatures { display: none; }
+
+/* =======================================================
+   === DISEÑO RESPONSIVO (MÓVILES Y TABLETS) === 
+   ======================================================= */
+@media (max-width: 768px) {
+    body { padding: 1rem 0.5rem; }
+    
+    /* Encabezado apilado */
+    .app-header { flex-direction: column; text-align: center; padding: 1.5rem 1rem; }
+    .logo-umg { margin-top: 15px; height: 75px; }
+    .header-text h1 { font-size: 1.5rem; }
+    
+    /* Convertir el Grid de 2 columnas a 1 columna */
+    .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
+    
+    /* Ajustes del Stepper para que quepa en celulares */
+    .stepper { padding: 1rem 0.5rem; }
+    .step-indicator { font-size: 0.7rem; }
+    .step-circle { width: 30px; height: 30px; font-size: 0.85rem; border-width: 2px; }
+    .step-indicator::after { top: 15px; } /* Ajustar la línea conectora */
+    
+    /* Ajustar espacios interiores */
+    .form-content { padding: 1.5rem 1rem; }
+    .section-title { font-size: 1.1rem; }
+    #idDisplay { font-size: 0.8rem !important; display: block; margin-top: 5px; width: 100%; text-align: left; }
+    
+    /* Apilar botones para usar fácil con el dedo */
+    .actions { flex-direction: column-reverse; padding: 1.2rem 1rem; }
+    .btn { width: 100%; padding: 1rem; }
+}
 
 /* === MODO IMPRESIÓN (PDF) === */
 @media print {
