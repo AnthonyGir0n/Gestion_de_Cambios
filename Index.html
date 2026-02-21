@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Cambios TI - UMG</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="loader">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg/960px-Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg.png?20230321174013" alt="Escudo UMG" class="loader-logo">
+    <div class="spinner"></div>
+    <h3 style="margin: 0; font-weight: 400; letter-spacing: 1px;">Iniciando SGS UMG...</h3>
+</div>
+
+<div class="app-container" id="appContainer">
+    
+    <header class="app-header">
+        <div class="header-text">
+            <h1>Gestión de Cambios (RFC)</h1>
+            <p>Maestría en Tecnologías de la Información | ISO/IEC 20000-1</p>
+        </div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg/960px-Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg.png?20230321174013" alt="Escudo UMG" class="logo-umg">
+    </header>
+
+    <div class="print-header">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg/960px-Escudo_de_la_universidad_Mariano_G%C3%A1lvez_Guatemala.svg.png?20230321174013" alt="Escudo UMG">
+        <div class="print-header-text">
+            <h2>Universidad Mariano Gálvez de Guatemala</h2>
+            <p>Facultad de Ingeniería, Matemática y Ciencias Físicas</p>
+            <p>Sistema de Gestión de Servicios TI - Plantilla ISO 20000-1:2018</p>
+        </div>
+        <div class="print-header-meta">
+            Fecha: <span id="printDate"></span><br>
+            Documento: Oficial TI<br>
+            Página 1 de 1
+        </div>
+    </div>
+
+    <div class="stepper" id="stepper">
+        <div class="step-indicator active" id="ind-1"><div class="step-circle">1</div>Registro</div>
+        <div class="step-indicator" id="ind-2"><div class="step-circle">2</div>Alcance</div>
+        <div class="step-indicator" id="ind-3"><div class="step-circle">3</div>Riesgos</div>
+        <div class="step-indicator" id="ind-4"><div class="step-circle">4</div>Ejecución</div>
+    </div>
+
+    <form id="rfcForm">
+        <div class="form-content">
+            
+            <div class="step-pane active" id="step-1">
+                <div class="section-title">Fase 1: Identificación del Cambio <span id="idDisplay" style="font-size: 0.9rem; color: var(--text-muted); float: right;"></span></div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Solicitante <span class="req">*</span></label>
+                        <input type="text" id="solicitante" placeholder="Nombre del responsable" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Departamento / Área <span class="req">*</span></label>
+                        <input type="text" id="departamento" placeholder="Ej: Infraestructura / Redes" required>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Tipo de Cambio <span class="req">*</span></label>
+                        <select id="tipoCambio" required>
+                            <option value="">Seleccione clasificación...</option>
+                            <option value="Normal">Normal (Evaluación CAB requerida)</option>
+                            <option value="Estandar">Estándar (Pre-aprobado / Bajo impacto)</option>
+                            <option value="Emergencia">Emergencia (Resolución crítica inmediata)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Propuesta de Ejecución <span class="req">*</span></label>
+                        <input type="datetime-local" id="fechaEjecucion" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-pane" id="step-2">
+                <div class="section-title">Fase 2: Especificación y CMDB</div>
+                <div class="form-group">
+                    <label>Título del Cambio <span class="req">*</span></label>
+                    <input type="text" id="titulo" placeholder="Ej: Actualización de sistema operativo en servidor principal" required>
+                </div>
+                <div class="form-group">
+                    <label>Justificación / Impacto al Negocio <span class="req">*</span></label>
+                    <textarea id="justificacion" placeholder="Detalle por qué el negocio requiere este cambio..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>CIs Afectados (Configuration Items) <span class="req">*</span></label>
+                    <textarea id="cis" placeholder="Liste servidores, bases de datos o software según CMDB..." required></textarea>
+                </div>
+            </div>
+
+            <div class="step-pane" id="step-3">
+                <div class="section-title">Fase 3: Mitigación y Riesgos (Calculadora)</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Impacto en Infraestructura <span class="req">*</span></label>
+                        <select id="impacto" onchange="calcularRiesgo()" required>
+                            <option value="1">1 - Bajo (Imperceptible para usuarios)</option>
+                            <option value="2">2 - Medio (Afecta algunos servicios no críticos)</option>
+                            <option value="3">3 - Alto (Detiene la operación principal)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Urgencia <span class="req">*</span></label>
+                        <select id="urgencia" onchange="calcularRiesgo()" required>
+                            <option value="1">1 - Baja (Planificado a futuro)</option>
+                            <option value="2">2 - Media (Necesario a corto plazo)</option>
+                            <option value="3">3 - Alta (Requiere acción inmediata)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Clasificación Automática de Riesgo:</label>
+                    <div id="riskBadge" class="risk-badge risk-low">Nivel de Riesgo: BAJO (Puntuación: 2)</div>
+                </div>
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label>Plan de Reversión (Backout Plan) <span class="req">*</span></label>
+                    <textarea id="backout" placeholder="Protocolo exacto a seguir si la ejecución falla..." required></textarea>
+                </div>
+            </div>
+
+            <div class="step-pane" id="step-4">
+                <div class="section-title">Fase 4: Verificación Post-Implementación</div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Resultado de Implementación:</label>
+                        <select id="resultado">
+                            <option value="">Pendiente de ejecución...</option>
+                            <option value="Exito">Cambio Exitoso</option>
+                            <option value="ExitoErrores">Exitoso con Ajustes</option>
+                            <option value="Fallido">Implementación Fallida (Revertido)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Actualización de CMDB:</label>
+                        <select id="cmdbUpdated">
+                            <option value="NA">Pendiente</option>
+                            <option value="Si">Completada</option>
+                            <option value="No">Requiere Acción</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Lecciones Aprendidas / Observaciones:</label>
+                    <textarea id="pir" placeholder="Documente incidentes o mejoras para futuros cambios similares..."></textarea>
+                </div>
+
+                <div class="print-signatures">
+                    <div class="signature-box"><br><br>Firma del Solicitante</div>
+                    <div class="signature-box"><br><br>Firma Autoridad de Cambio (CAB)</div>
+                    <div class="signature-box"><br><br>Visto Bueno (Cierre Técnico)</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn btn-prev" id="btnPrev" onclick="changeStep(-1)" style="visibility: hidden;">◀ Anterior</button>
+            <button type="button" class="btn btn-next" id="btnNext" onclick="changeStep(1)">Siguiente ▶</button>
+            <button type="submit" class="btn btn-success" id="btnSubmit" style="display: none;">🖨️ Generar Reporte Oficial PDF</button>
+        </div>
+    </form>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
