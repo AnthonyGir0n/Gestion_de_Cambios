@@ -15,69 +15,43 @@
 
 * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
 
-/* === PANTALLA DE CARGA (LOADER) === */
 #loader {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: var(--umg-blue);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: var(--surface);
-    transition: opacity 0.8s ease, visibility 0.8s;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--umg-blue); z-index: 9999;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    color: var(--surface); transition: opacity 0.8s ease, visibility 0.8s;
 }
 
 .loader-logo { width: 120px; margin-bottom: 25px; animation: pulse 1.5s infinite alternate; filter: drop-shadow(0 0 15px rgba(241, 196, 15, 0.4)); }
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.05); }
-}
+@keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
 
 .spinner {
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    border-left-color: var(--umg-gold);
-    border-radius: 50%;
-    width: 40px; height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    border: 4px solid rgba(255, 255, 255, 0.1); border-left-color: var(--umg-gold);
+    border-radius: 50%; width: 40px; height: 40px;
+    animation: spin 1s linear infinite; margin-bottom: 15px;
 }
-
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* === FONDO ANIMADO Y ESTRUCTURA === */
 body { 
     background: linear-gradient(-45deg, #e0eaf5, #f0f4f8, #cfd9e8, #e6eef5);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    color: var(--text-main); margin: 0; padding: 2rem 1rem; line-height: 1.6; 
-    overflow-x: hidden;
+    background-size: 400% 400%; animation: gradientBG 15s ease infinite;
+    color: var(--text-main); margin: 0; padding: 2rem 1rem; line-height: 1.6; overflow-x: hidden;
 }
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+@keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
 .app-container { 
     max-width: 950px; margin: 0 auto; background: var(--surface); 
     border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; position: relative;
     opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease;
 }
-
 .app-container.loaded { opacity: 1; transform: translateY(0); }
 
-/* === ENCABEZADO WEB === */
 .app-header { background: var(--umg-blue); color: white; padding: 2rem; display: flex; align-items: center; justify-content: space-between; position: relative; overflow: hidden; }
 .app-header::after { content: ''; position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--umg-gold); opacity: 0.1; border-radius: 50%; }
 .header-text h1 { margin: 0; font-size: 1.8rem; font-weight: 600; color: var(--umg-gold); }
 .header-text p { margin: 0.5rem 0 0; opacity: 0.9; font-size: 0.95rem; }
 .logo-umg { height: 90px; width: auto; z-index: 2; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
 
-/* === STEPPER (ASISTENTE ANIMADO) === */
 .stepper { display: flex; justify-content: space-between; padding: 1.5rem 2rem; background: #fafbfc; border-bottom: 2px solid var(--border); }
 .step-indicator { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; transition: var(--transition); text-align: center; }
 .step-indicator::after { content: ''; position: absolute; top: 18px; left: 50%; width: 100%; height: 3px; background: var(--border); z-index: 1; transition: var(--transition); }
@@ -89,9 +63,7 @@ body {
 .step-indicator.completed .step-circle { border-color: var(--umg-gold); background: var(--umg-gold); color: var(--umg-blue); }
 .step-indicator.completed::after { background: var(--umg-gold); }
 
-/* === FORMULARIO Y ANIMACIONES === */
 .form-content { padding: 2rem; min-height: 400px; position: relative; }
-
 .step-pane { display: none; opacity: 0; transform: translateX(20px); transition: var(--transition); }
 .step-pane.active { display: block; opacity: 1; transform: translateX(0); animation: slideIn 0.5s ease forwards; }
 @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -99,7 +71,6 @@ body {
 .section-title { font-size: 1.3rem; color: var(--umg-blue); margin-top: 0; border-bottom: 2px solid var(--umg-gold); padding-bottom: 0.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; font-weight: 700; flex-wrap: wrap; gap: 10px; }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-
 .form-group { margin-bottom: 1.5rem; display: flex; flex-direction: column; position: relative; }
 .form-group label { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--umg-blue); transition: var(--transition); }
 .form-group label span.req { color: #e74c3c; }
@@ -114,62 +85,52 @@ textarea { resize: vertical; min-height: 100px; }
 .risk-high { background: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
 
 /* === COMPONENTE DE EVIDENCIAS (DRAG & DROP) === */
-.file-drop-area {
-    position: relative; display: flex; align-items: center; justify-content: center;
-    width: 100%; max-width: 100%; padding: 35px 20px;
-    border: 2px dashed #b0bec5; border-radius: 8px; background-color: #f8fafd;
-    transition: var(--transition); text-align: center; cursor: pointer;
-}
+.file-drop-area { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; padding: 35px 20px; border: 2px dashed #b0bec5; border-radius: 8px; background-color: #f8fafd; transition: var(--transition); text-align: center; cursor: pointer; }
 .file-drop-area:hover, .file-drop-area.is-active { background-color: #eef2f7; border-color: var(--umg-blue); }
 .file-msg { font-size: 0.95rem; color: var(--text-main); font-weight: 600; pointer-events: none; }
 .file-input { position: absolute; left: 0; top: 0; height: 100%; width: 100%; cursor: pointer; opacity: 0; }
 .file-input:focus ~ .file-msg { color: var(--umg-blue); }
 
-/* === BOTONES === */
+/* === PREVISUALIZACIÓN DE ARCHIVOS === */
+.preview-container { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
+.preview-item { position: relative; width: 90px; height: 90px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.1); background: #fff; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.preview-item .file-icon { font-size: 2.2rem; margin-bottom: 5px; }
+.preview-item .file-name { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0, 43, 92, 0.85); color: white; font-size: 0.6rem; padding: 4px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: bold; }
+
 .actions { display: flex; justify-content: space-between; padding: 1.5rem 2rem; background: #f4f6f9; border-top: 1px solid var(--border); gap: 15px; }
 .btn { padding: 0.8rem 1.8rem; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: var(--transition); text-align: center; justify-content: center; }
 .btn-prev { background: white; border: 2px solid var(--border); color: var(--text-main); }
-.btn-prev:hover { background: #e2e6ea; border-color: #dae0e5; transform: translateY(-2px); }
+.btn-prev:hover { background: #e2e6ea; transform: translateY(-2px); }
 .btn-next { background: var(--umg-blue); color: white; box-shadow: 0 4px 10px rgba(0, 43, 92, 0.3); }
 .btn-next:hover { background: var(--umg-blue-light); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 43, 92, 0.4); }
 .btn-success { background: var(--umg-gold); color: var(--umg-blue); box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3); width: auto; }
 .btn-success:hover { background: var(--umg-gold-hover); transform: translateY(-2px); }
 
-/* Elementos de PDF ocultos en web */
-.print-header { display: none; }
-.print-signatures { display: none; }
+.print-header, .print-signatures { display: none; }
 
-/* === DISEÑO RESPONSIVO (MÓVILES Y TABLETS) === */
 @media (max-width: 768px) {
     body { padding: 1rem 0.5rem; }
     .app-header { flex-direction: column; text-align: center; padding: 1.5rem 1rem; }
     .logo-umg { margin-top: 15px; height: 75px; }
     .header-text h1 { font-size: 1.5rem; }
-    
     .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
-    
-    /* Ajustes especiales para que los 5 pasos quepan en celular */
     .stepper { padding: 1rem 0.2rem; }
     .step-indicator { font-size: 0.65rem; }
     .step-circle { width: 26px; height: 26px; font-size: 0.8rem; border-width: 2px; }
     .step-indicator::after { top: 13px; } 
-    
     .form-content { padding: 1.5rem 1rem; }
     .section-title { font-size: 1.1rem; }
     #idDisplay { font-size: 0.8rem !important; display: block; margin-top: 5px; width: 100%; text-align: left; }
-    
     .actions { flex-direction: column-reverse; padding: 1.2rem 1rem; }
     .btn { width: 100%; padding: 1rem; }
 }
 
-/* === MODO IMPRESIÓN (PDF) === */
 @media print {
     @page { margin: 1.5cm; size: A4 portrait; }
     body { background: white !important; padding: 0; font-size: 11pt; color: black; animation: none; overflow: visible; }
-    
-    #loader { display: none !important; }
+    #loader, .stepper, .actions, .app-header { display: none !important; }
     .app-container { box-shadow: none; border: none; max-width: 100%; margin: 0; opacity: 1; transform: none; }
-    .stepper, .actions, .app-header { display: none !important; }
     
     .print-header { display: flex !important; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--umg-blue); padding-bottom: 15px; margin-bottom: 25px; }
     .print-header img { height: 90px; width: auto; }
@@ -180,19 +141,19 @@ textarea { resize: vertical; min-height: 100px; }
 
     .form-content { padding: 0; }
     .step-pane { display: block !important; opacity: 1 !important; transform: none !important; margin-bottom: 20px; page-break-inside: avoid; animation: none !important; }
-    
     .section-title { font-size: 12pt; color: white !important; background-color: var(--umg-blue) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 5px 10px; margin-bottom: 15px; border: none; border-radius: 3px; }
-
     .form-group { margin-bottom: 12px; }
     .form-group label { font-size: 9pt; color: #333; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
     input, select, textarea { border: none !important; border-bottom: 1px solid #999 !important; background: transparent !important; padding: 5px 0 !important; font-size: 11pt; color: black !important; border-radius: 0 !important; box-shadow: none !important; height: auto !important; transform: none !important; }
     textarea { border: 1px solid #ccc !important; padding: 8px !important; margin-top: 5px; min-height: 60px; }
-    
     .risk-badge { border: 2px solid black !important; background: white !important; color: black !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; transform: none !important; }
 
-    /* Darle estilo limpio a las evidencias para el PDF */
-    .file-drop-area { border: 1px solid #ccc !important; padding: 15px !important; background: transparent !important; border-radius: 4px; }
-    .file-msg::before { content: "Documentos cargados digitalmente: "; font-weight: normal; color: #666; }
+    .file-drop-area { display: none; }
+    
+    /* Mostrar miniaturas en el PDF */
+    .preview-container { display: flex !important; flex-wrap: wrap; gap: 10px; border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+    .preview-item { width: 70px; height: 70px; border: 1px solid #ddd; }
+    .preview-container:empty::after { content: "Documentos cargados digitalmente."; font-style: italic; font-size: 10pt; color: #555; }
 
     .print-signatures { display: flex !important; justify-content: space-between; margin-top: 40px; page-break-inside: avoid; }
     .signature-box { width: 30%; text-align: center; border-top: 1px solid black; padding-top: 5px; font-size: 9pt; }
