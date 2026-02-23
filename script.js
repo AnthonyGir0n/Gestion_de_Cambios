@@ -3,20 +3,15 @@ window.addEventListener('load', () => {
     setTimeout(() => {
         const loader = document.getElementById('loader');
         const appContainer = document.getElementById('appContainer');
-        
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
-        
-        setTimeout(() => {
-            appContainer.classList.add('loaded');
-        }, 300);
-        
+        setTimeout(() => appContainer.classList.add('loaded'), 300);
     }, 1500); 
 });
 
 // === LÓGICA DEL FORMULARIO ===
 let currentStep = 1;
-const totalSteps = 5; // <--- Cambiado a 5 pasos
+const totalSteps = 5;
 
 document.addEventListener('DOMContentLoaded', () => {
     const dateObj = new Date();
@@ -65,7 +60,6 @@ function validateCurrentStep() {
         if (!input.checkValidity()) {
             input.reportValidity();
             
-            // Animación de borde rojo para archivos o inputs normales
             if (input.type === 'file') {
                 input.parentElement.style.borderColor = '#e74c3c';
                 setTimeout(() => input.parentElement.style.borderColor = '', 2000);
@@ -84,7 +78,6 @@ function calcularRiesgo() {
     const urgencia = parseInt(document.getElementById('urgencia').value);
     const score = impacto + urgencia;
     const badge = document.getElementById('riskBadge');
-    
     badge.className = 'risk-badge'; 
 
     if (score <= 3) {
@@ -99,25 +92,57 @@ function calcularRiesgo() {
     }
 }
 
-// === INTERACTIVIDAD DE SUBIDA DE ARCHIVOS ===
+// === INTERACTIVIDAD Y PREVISUALIZACIÓN DE ARCHIVOS ===
 const fileInputs = document.querySelectorAll('.file-input');
 fileInputs.forEach(input => {
-    // Cuando el mouse entra (Drag & Drop visual)
     input.addEventListener('dragenter', () => input.parentElement.classList.add('is-active'));
     input.addEventListener('dragleave', () => input.parentElement.classList.remove('is-active'));
     input.addEventListener('drop', () => input.parentElement.classList.remove('is-active'));
     
-    // Cuando se selecciona un archivo
     input.addEventListener('change', function() {
         const msgSpan = this.previousElementSibling;
-        if (this.files && this.files.length > 1) {
-            msgSpan.innerText = `✅ ${this.files.length} archivos seleccionados`;
+        const previewContainer = this.parentElement.nextElementSibling;
+        
+        // Limpiar previsualizaciones anteriores
+        previewContainer.innerHTML = ''; 
+
+        if (this.files && this.files.length > 0) {
+            msgSpan.innerText = `✅ ${this.files.length} archivo(s) listo(s)`;
             msgSpan.style.color = '#002b5c';
-        } else if (this.files && this.files.length === 1) {
-            msgSpan.innerText = `✅ Archivo cargado: ${this.files[0].name}`;
-            msgSpan.style.color = '#002b5c';
+            
+            // Generar previsualización por cada archivo
+            Array.from(this.files).forEach(file => {
+                const previewItem = document.createElement('div');
+                previewItem.className = 'preview-item';
+                
+                // Si es imagen, muestra miniatura
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        previewItem.innerHTML = `
+                            <img src="${e.target.result}" alt="${file.name}">
+                            <div class="file-name">${file.name}</div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Si es documento (PDF, Word, etc.), muestra un ícono
+                    let icon = '📄';
+                    if (file.type === 'application/pdf') icon = '📕';
+                    else if (file.type.includes('word') || file.name.endsWith('.docx')) icon = '📘';
+                    else if (file.type.includes('zip') || file.name.endsWith('.rar')) icon = '📦';
+
+                    previewItem.innerHTML = `
+                        <div class="file-icon">${icon}</div>
+                        <div class="file-name">${file.name}</div>
+                    `;
+                }
+                previewContainer.appendChild(previewItem);
+            });
+            
         } else {
             msgSpan.innerText = 'Arrastra y suelta tus archivos aquí o haz clic para subir';
+            msgSpan.style.color = 'var(--text-main)';
         }
     });
 });
