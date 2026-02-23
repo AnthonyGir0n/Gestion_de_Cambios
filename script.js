@@ -93,14 +93,14 @@ function calcularRiesgo() {
     }
 }
 
-// === LECTURA AVANZADA DE DOCUMENTOS (MULTIPÁGINA Y ORDENADO) ===
+// === LECTURA AVANZADA Y SEGURA DE MÚLTIPLES PÁGINAS PDF ===
 const fileInputs = document.querySelectorAll('.file-input');
 fileInputs.forEach(input => {
     input.addEventListener('dragenter', () => input.parentElement.classList.add('is-active'));
     input.addEventListener('dragleave', () => input.parentElement.classList.remove('is-active'));
     input.addEventListener('drop', () => input.parentElement.classList.remove('is-active'));
     
-    // Usamos función asíncrona para garantizar el orden de las páginas
+    // Función asíncrona para garantizar orden estricto de lectura
     input.addEventListener('change', async function() {
         const msgSpan = this.previousElementSibling;
         const previewContainer = this.parentElement.nextElementSibling;
@@ -108,81 +108,83 @@ fileInputs.forEach(input => {
         previewContainer.innerHTML = ''; // Limpiar previsualizaciones anteriores
 
         if (this.files && this.files.length > 0) {
-            msgSpan.innerText = `⏳ Procesando ${this.files.length} documento(s)...`;
             msgSpan.style.color = '#e74c3c';
             
-            // Iterar sobre todos los archivos seleccionados
+            // Recorremos todos los archivos seleccionados
             for (let file of Array.from(this.files)) {
                 
-                // Crear un envoltorio principal para cada documento
                 const docWrapper = document.createElement('div');
                 docWrapper.className = 'document-wrapper';
                 previewContainer.appendChild(docWrapper);
                 
                 // Si es IMAGEN
                 if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        docWrapper.innerHTML = `
-                            <div class="doc-title">🖼️ Imagen Adjunta: ${file.name}</div>
-                            <div class="preview-item">
-                                <div class="file-name">Evidencia Fotográfica</div>
-                                <img src="${e.target.result}" alt="${file.name}">
-                            </div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                } 
-                // Si es PDF (Procesamiento Multipágina)
-                else if (file.type === 'application/pdf') {
+                    msgSpan.innerText = `⏳ Procesando imagen: ${file.name}...`;
                     const reader = new FileReader();
                     
-                    // Envolvemos el onload en una promesa para pausar el bucle si es necesario
                     await new Promise(resolve => {
-                        reader.onload = async function(e) {
-                            try {
-                                const typedarray = new Uint8Array(e.target.result);
-                                const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                                
-                                docWrapper.innerHTML = `<div class="doc-title">📕 Documento PDF: ${file.name} (${pdf.numPages} páginas)</div>`;
-                                
-                                const pagesContainer = document.createElement('div');
-                                pagesContainer.className = 'pdf-pages-container';
-                                docWrapper.appendChild(pagesContainer);
-                                
-                                // Bucle FOR asíncrono para garantizar que la Pag 1 renderice antes que la Pag 2
-                                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                                    const page = await pdf.getPage(pageNum);
-                                    const viewport = page.getViewport({scale: 1.5}); // Escala óptima para impresión
-                                    
-                                    const canvas = document.createElement('canvas');
-                                    const context = canvas.getContext('2d');
-                                    canvas.height = viewport.height;
-                                    canvas.width = viewport.width;
-
-                                    // Renderizar la página actual
-                                    await page.render({canvasContext: context, viewport: viewport}).promise;
-                                    
-                                    const previewItem = document.createElement('div');
-                                    previewItem.className = 'preview-item';
-                                    previewItem.innerHTML = `<div class="file-name">Página ${pageNum} de ${pdf.numPages}</div>`;
-                                    previewItem.appendChild(canvas);
-                                    
-                                    pagesContainer.appendChild(previewItem);
-                                }
-                                resolve(); // Termina este PDF
-                            } catch (err) {
-                                console.error("Error leyendo PDF", err);
-                                docWrapper.innerHTML = `<div class="doc-title">❌ Error procesando PDF: ${file.name}</div>`;
-                                resolve();
-                            }
+                        reader.onload = (e) => {
+                            docWrapper.innerHTML = `
+                                <div class="doc-title">🖼️ Imagen Adjunta: ${file.name}</div>
+                                <div class="preview-item">
+                                    <div class="file-name">Evidencia Fotográfica</div>
+                                    <img src="${e.target.result}" alt="${file.name}">
+                                </div>
+                            `;
+                            resolve();
                         };
-                        reader.readAsArrayBuffer(file);
+                        reader.readAsDataURL(file);
                     });
+                } 
+                // Si es PDF
+                else if (file.type === 'application/pdf') {
+                    try {
+                        msgSpan.innerText = `⏳ Abriendo PDF: ${file.name}...`;
+                        
+                        // Uso de arrayBuffer (más seguro y rápido para archivos grandes)
+                        const arrayBuffer = await file.arrayBuffer();
+                        const typedarray = new Uint8Array(arrayBuffer);
+                        
+                        // Carga el documento en PDF.js
+                        const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                        
+                        docWrapper.innerHTML = `<div class="doc-title">📕 Documento PDF: ${file.name} (${pdf.numPages} páginas)</div>`;
+                        const pagesContainer = document.createElement('div');
+                        pagesContainer.className = 'pdf-pages-container';
+                        docWrapper.appendChild(pagesContainer);
+                        
+                        // Bucle FOR asíncrono que obliga al sistema a dibujar la pag 1 antes de pasar a la 2
+                        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                            msgSpan.innerText = `⏳ Dibujando página ${pageNum} de ${pdf.numPages}... (${file.name})`;
+                            
+                            const page = await pdf.getPage(pageNum);
+                            // Escala ajustada a 1.2 para que se vea claro pero no sature la memoria
+                            const viewport = page.getViewport({scale: 1.2}); 
+                            
+                            const canvas = document.createElement('canvas');
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            // Esperar a que la página termine de renderizarse en el canvas
+                            await page.render({canvasContext: context, viewport: viewport}).promise;
+                            
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'preview-item';
+                            previewItem.innerHTML = `<div class="file-name">Página ${pageNum} de ${pdf.numPages}</div>`;
+                            previewItem.appendChild(canvas);
+                            
+                            pagesContainer.appendChild(previewItem);
+                        }
+                    } catch (err) {
+                        console.error("Error leyendo PDF", err);
+                        docWrapper.innerHTML += `<div style="color:red; font-weight:bold; padding:10px;">❌ Error procesando PDF: ${file.name}. Intente con un documento más liviano.</div>`;
+                    }
                 }
             }
             
-            msgSpan.innerText = `✅ ${this.files.length} documento(s) listo(s) para imprimir`;
+            // Confirmación final
+            msgSpan.innerText = `✅ ${this.files.length} documento(s) listos para la impresión`;
             msgSpan.style.color = '#002b5c';
             
         } else {
