@@ -53,7 +53,7 @@ textarea { resize: vertical; min-height: 100px; }
 .risk-medium { background: #fff3cd; color: #856404; border-left: 5px solid #ffc107; }
 .risk-high { background: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
 
-/* === COMPONENTE DE EVIDENCIAS Y PREVIEW WEB === */
+/* === EVIDENCIAS WEB (PREVIEW) === */
 .file-drop-area { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; padding: 35px 20px; border: 2px dashed #b0bec5; border-radius: 8px; background-color: #f8fafd; transition: var(--transition); text-align: center; cursor: pointer; }
 .file-drop-area:hover, .file-drop-area.is-active { background-color: #eef2f7; border-color: var(--umg-blue); }
 .file-msg { font-size: 0.95rem; color: var(--text-main); font-weight: 600; pointer-events: none; }
@@ -64,7 +64,7 @@ textarea { resize: vertical; min-height: 100px; }
 .doc-title { font-weight: bold; color: var(--umg-blue); margin-bottom: 15px; border-bottom: 2px solid var(--umg-gold); padding-bottom: 5px; font-size: 1.1rem; }
 .pdf-pages-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
 
-.preview-item { position: relative; width: 200px; border-radius: 6px; overflow: hidden; border: 1px solid #ccc; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+.preview-item { position: relative; width: 180px; border-radius: 6px; overflow: hidden; border: 1px solid #ccc; background: #fdfdfd; display: flex; flex-direction: column; align-items: center; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
 .preview-item img, .preview-item canvas { width: 100%; height: auto; object-fit: contain; }
 .preview-item .file-name { width: 100%; background: var(--umg-blue); color: white; font-size: 0.8rem; padding: 6px; text-align: center; font-weight: bold; }
 
@@ -79,21 +79,7 @@ textarea { resize: vertical; min-height: 100px; }
 
 .print-header, .print-signatures { display: none; }
 
-@media (max-width: 768px) {
-    body { padding: 1rem 0.5rem; }
-    .app-header { flex-direction: column; text-align: center; padding: 1.5rem 1rem; }
-    .logo-umg { margin-top: 15px; height: 75px; }
-    .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
-    .stepper { padding: 1rem 0.2rem; }
-    .step-indicator { font-size: 0.65rem; }
-    .step-circle { width: 26px; height: 26px; font-size: 0.8rem; border-width: 2px; }
-    .step-indicator::after { top: 13px; } 
-    .form-content { padding: 1.5rem 1rem; }
-    .actions { flex-direction: column-reverse; padding: 1.2rem 1rem; }
-    .btn { width: 100%; padding: 1rem; }
-}
-
-/* === MODO IMPRESIÓN (PDF Y DOCUMENTOS MULTIPÁGINA) === */
+/* === MODO IMPRESIÓN EXCLUSIVO (PDFs MULTIPÁGINA A4) === */
 @media print {
     @page { margin: 1.5cm; size: A4 portrait; }
     body { background: white !important; padding: 0; font-size: 11pt; color: black; animation: none; overflow: visible; }
@@ -115,16 +101,18 @@ textarea { resize: vertical; min-height: 100px; }
     
     .file-drop-area { display: none; }
     
-    /* Reglas críticas para que el PDF renderizado salga perfecto en papel */
-    .document-wrapper { width: 100%; border: none; padding: 0; background: transparent; margin-bottom: 30px; }
-    .doc-title { font-size: 14pt; color: var(--umg-blue) !important; margin-bottom: 15px; border-bottom: 2px solid var(--umg-blue); }
-    .pdf-pages-container { display: block; }
+    /* Configuración para que el PDF renderizado se liste como páginas A4 completas */
+    .document-wrapper { width: 100%; border: none; padding: 0; background: transparent; margin-bottom: 40px; }
+    .doc-title { font-size: 14pt; color: var(--umg-blue) !important; margin-bottom: 15px; border-bottom: 2px solid var(--umg-blue); page-break-after: avoid; }
     
-    /* Forzar que cada página del PDF sea una imagen grande y no se corte por la mitad en la impresora */
-    .preview-item { width: 100%; height: auto; border: none; background: transparent; display: block; page-break-inside: avoid; margin-bottom: 20px; box-shadow: none; }
-    .preview-item img, .preview-item canvas { max-width: 100%; height: auto; border: 1px solid #ccc; }
-    .preview-item .file-name { position: static; background: transparent; color: black; font-size: 10pt; text-align: left; padding: 5px 0; font-weight: bold; }
+    /* Apila las páginas hacia abajo */
+    .pdf-pages-container { display: flex; flex-direction: column; gap: 30px; }
+    
+    /* Obliga a la impresora a tratar cada página como un bloque sólido */
+    .preview-item { width: 100%; display: block; page-break-inside: avoid; border: none; box-shadow: none; background: transparent; margin: 0; }
+    .preview-item canvas, .preview-item img { width: 100% !important; max-width: 100%; height: auto !important; border: 1px solid #999; }
+    .preview-item .file-name { position: relative; background: transparent; color: black; font-size: 11pt; border-bottom: 1px solid #ccc; margin-bottom: 5px; text-align: left; padding: 0; font-weight: bold; }
 
-    .print-signatures { display: flex !important; justify-content: space-between; margin-top: 40px; page-break-inside: avoid; }
+    .print-signatures { display: flex !important; justify-content: space-between; margin-top: 50px; page-break-inside: avoid; }
     .signature-box { width: 30%; text-align: center; border-top: 1px solid black; padding-top: 5px; font-size: 9pt; }
 }
