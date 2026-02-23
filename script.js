@@ -2,7 +2,6 @@
 const pdfjsLib = window['pdfjs-dist/build/pdf'];
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-// === LÓGICA DE CARGA (LOADER) ===
 window.addEventListener('load', () => {
     setTimeout(() => {
         const loader = document.getElementById('loader');
@@ -13,7 +12,6 @@ window.addEventListener('load', () => {
     }, 1500); 
 });
 
-// === LÓGICA DEL FORMULARIO ===
 let currentStep = 1;
 const totalSteps = 5;
 
@@ -63,7 +61,6 @@ function validateCurrentStep() {
     for (let input of inputs) {
         if (!input.checkValidity()) {
             input.reportValidity();
-            
             if (input.type === 'file') {
                 input.parentElement.style.borderColor = '#e74c3c';
                 setTimeout(() => input.parentElement.style.borderColor = '', 2000);
@@ -96,70 +93,97 @@ function calcularRiesgo() {
     }
 }
 
-// === LECTURA Y PREVISUALIZACIÓN DE IMÁGENES Y PDFS ===
+// === LECTURA AVANZADA DE DOCUMENTOS (MULTIPÁGINA Y ORDENADO) ===
 const fileInputs = document.querySelectorAll('.file-input');
 fileInputs.forEach(input => {
     input.addEventListener('dragenter', () => input.parentElement.classList.add('is-active'));
     input.addEventListener('dragleave', () => input.parentElement.classList.remove('is-active'));
     input.addEventListener('drop', () => input.parentElement.classList.remove('is-active'));
     
-    input.addEventListener('change', function() {
+    // Usamos función asíncrona para garantizar el orden de las páginas
+    input.addEventListener('change', async function() {
         const msgSpan = this.previousElementSibling;
         const previewContainer = this.parentElement.nextElementSibling;
         
-        previewContainer.innerHTML = ''; 
+        previewContainer.innerHTML = ''; // Limpiar previsualizaciones anteriores
 
         if (this.files && this.files.length > 0) {
-            msgSpan.innerText = `✅ ${this.files.length} documento(s) cargado(s)`;
-            msgSpan.style.color = '#002b5c';
+            msgSpan.innerText = `⏳ Procesando ${this.files.length} documento(s)...`;
+            msgSpan.style.color = '#e74c3c';
             
-            Array.from(this.files).forEach(file => {
-                const previewItem = document.createElement('div');
-                previewItem.className = 'preview-item';
+            // Iterar sobre todos los archivos seleccionados
+            for (let file of Array.from(this.files)) {
                 
-                // Si es IMAGEN, se muestra directamente
+                // Crear un envoltorio principal para cada documento
+                const docWrapper = document.createElement('div');
+                docWrapper.className = 'document-wrapper';
+                previewContainer.appendChild(docWrapper);
+                
+                // Si es IMAGEN
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
                     reader.onload = (e) => {
-                        previewItem.innerHTML = `
-                            <div class="file-name">Evidencia: ${file.name}</div>
-                            <img src="${e.target.result}" alt="${file.name}">
+                        docWrapper.innerHTML = `
+                            <div class="doc-title">🖼️ Imagen Adjunta: ${file.name}</div>
+                            <div class="preview-item">
+                                <div class="file-name">Evidencia Fotográfica</div>
+                                <img src="${e.target.result}" alt="${file.name}">
+                            </div>
                         `;
                     };
                     reader.readAsDataURL(file);
-                    previewContainer.appendChild(previewItem);
                 } 
-                // Si es PDF, usamos PDF.js para renderizar la primera página como imagen
+                // Si es PDF (Procesamiento Multipágina)
                 else if (file.type === 'application/pdf') {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const typedarray = new Uint8Array(e.target.result);
-                        
-                        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-                            pdf.getPage(1).then(page => {
-                                const viewport = page.getViewport({scale: 1.5});
-                                const canvas = document.createElement('canvas');
-                                const context = canvas.getContext('2d');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-
-                                const renderContext = { canvasContext: context, viewport: viewport };
+                    
+                    // Envolvemos el onload en una promesa para pausar el bucle si es necesario
+                    await new Promise(resolve => {
+                        reader.onload = async function(e) {
+                            try {
+                                const typedarray = new Uint8Array(e.target.result);
+                                const pdf = await pdfjsLib.getDocument(typedarray).promise;
                                 
-                                page.render(renderContext).promise.then(() => {
-                                    previewItem.innerHTML = `<div class="file-name">Documento PDF: ${file.name}</div>`;
+                                docWrapper.innerHTML = `<div class="doc-title">📕 Documento PDF: ${file.name} (${pdf.numPages} páginas)</div>`;
+                                
+                                const pagesContainer = document.createElement('div');
+                                pagesContainer.className = 'pdf-pages-container';
+                                docWrapper.appendChild(pagesContainer);
+                                
+                                // Bucle FOR asíncrono para garantizar que la Pag 1 renderice antes que la Pag 2
+                                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                                    const page = await pdf.getPage(pageNum);
+                                    const viewport = page.getViewport({scale: 1.5}); // Escala óptima para impresión
+                                    
+                                    const canvas = document.createElement('canvas');
+                                    const context = canvas.getContext('2d');
+                                    canvas.height = viewport.height;
+                                    canvas.width = viewport.width;
+
+                                    // Renderizar la página actual
+                                    await page.render({canvasContext: context, viewport: viewport}).promise;
+                                    
+                                    const previewItem = document.createElement('div');
+                                    previewItem.className = 'preview-item';
+                                    previewItem.innerHTML = `<div class="file-name">Página ${pageNum} de ${pdf.numPages}</div>`;
                                     previewItem.appendChild(canvas);
-                                    previewContainer.appendChild(previewItem);
-                                });
-                            });
-                        }).catch(err => {
-                            console.error("Error leyendo PDF", err);
-                            previewItem.innerHTML = `<div class="file-name">${file.name} (Error al cargar vista previa)</div>`;
-                            previewContainer.appendChild(previewItem);
-                        });
-                    };
-                    reader.readAsArrayBuffer(file);
+                                    
+                                    pagesContainer.appendChild(previewItem);
+                                }
+                                resolve(); // Termina este PDF
+                            } catch (err) {
+                                console.error("Error leyendo PDF", err);
+                                docWrapper.innerHTML = `<div class="doc-title">❌ Error procesando PDF: ${file.name}</div>`;
+                                resolve();
+                            }
+                        };
+                        reader.readAsArrayBuffer(file);
+                    });
                 }
-            });
+            }
+            
+            msgSpan.innerText = `✅ ${this.files.length} documento(s) listo(s) para imprimir`;
+            msgSpan.style.color = '#002b5c';
             
         } else {
             msgSpan.innerText = 'Arrastra y suelta tus imágenes o PDFs aquí';
