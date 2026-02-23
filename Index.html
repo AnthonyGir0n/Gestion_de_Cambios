@@ -132,8 +132,9 @@
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte capturas de pantalla, logs de pruebas en QA o el script ejecutado. (Requerido)</p>
                     <div class="file-drop-area">
                         <span class="file-msg">📁 Arrastra y suelta tus archivos aquí o haz clic para subir</span>
-                        <input class="file-input" type="file" id="evidenciaPrincipal" multiple required>
+                        <input class="file-input" type="file" id="evidenciaPrincipal" accept="image/*,.pdf,.doc,.docx,.txt" multiple required>
                     </div>
+                    <div class="preview-container" id="previewPrincipal"></div>
                 </div>
 
                 <div class="form-group" style="margin-top: 2rem;">
@@ -141,8 +142,9 @@
                     <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte correos de aprobación de proveedores o actas de otras áreas involucradas. (Opcional)</p>
                     <div class="file-drop-area">
                         <span class="file-msg">📎 Arrastra y suelta tus archivos aquí o haz clic para subir</span>
-                        <input class="file-input" type="file" id="evidenciaTerceros" multiple>
+                        <input class="file-input" type="file" id="evidenciaTerceros" accept="image/*,.pdf,.doc,.docx,.txt" multiple>
                     </div>
+                    <div class="preview-container" id="previewTerceros"></div>
                 </div>
             </div>
 
