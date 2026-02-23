@@ -42,7 +42,8 @@
         <div class="step-indicator active" id="ind-1"><div class="step-circle">1</div>Registro</div>
         <div class="step-indicator" id="ind-2"><div class="step-circle">2</div>Alcance</div>
         <div class="step-indicator" id="ind-3"><div class="step-circle">3</div>Riesgos</div>
-        <div class="step-indicator" id="ind-4"><div class="step-circle">4</div>Ejecución</div>
+        <div class="step-indicator" id="ind-4"><div class="step-circle">4</div>Evidencias</div>
+        <div class="step-indicator" id="ind-5"><div class="step-circle">5</div>Ejecución</div>
     </div>
 
     <form id="rfcForm">
@@ -124,7 +125,29 @@
             </div>
 
             <div class="step-pane" id="step-4">
-                <div class="section-title">Fase 4: Verificación Post-Implementación</div>
+                <div class="section-title">Fase 4: Respaldo y Evidencias Documentales</div>
+                
+                <div class="form-group">
+                    <label>Pruebas realizadas o acciones ejecutadas <span class="req">*</span></label>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte capturas de pantalla, logs de pruebas en QA o el script ejecutado. (Requerido)</p>
+                    <div class="file-drop-area">
+                        <span class="file-msg">📁 Arrastra y suelta tus archivos aquí o haz clic para subir</span>
+                        <input class="file-input" type="file" id="evidenciaPrincipal" multiple required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 2rem;">
+                    <label>Áreas 3ras participantes, evidencias</label>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte correos de aprobación de proveedores o actas de otras áreas involucradas. (Opcional)</p>
+                    <div class="file-drop-area">
+                        <span class="file-msg">📎 Arrastra y suelta tus archivos aquí o haz clic para subir</span>
+                        <input class="file-input" type="file" id="evidenciaTerceros" multiple>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-pane" id="step-5">
+                <div class="section-title">Fase 5: Verificación Post-Implementación</div>
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Resultado de Implementación:</label>
