@@ -7,17 +7,16 @@ window.addEventListener('load', () => {
         loader.style.opacity = '0';
         loader.style.visibility = 'hidden';
         
-        // Inicia la animación de entrada del formulario
         setTimeout(() => {
             appContainer.classList.add('loaded');
         }, 300);
         
-    }, 1500); // Simula 1.5 segundos de carga del sistema
+    }, 1500); 
 });
 
 // === LÓGICA DEL FORMULARIO ===
 let currentStep = 1;
-const totalSteps = 4;
+const totalSteps = 5; // <--- Cambiado a 5 pasos
 
 document.addEventListener('DOMContentLoaded', () => {
     const dateObj = new Date();
@@ -65,8 +64,15 @@ function validateCurrentStep() {
     for (let input of inputs) {
         if (!input.checkValidity()) {
             input.reportValidity();
-            input.style.borderColor = '#e74c3c';
-            setTimeout(() => input.style.borderColor = '', 2000);
+            
+            // Animación de borde rojo para archivos o inputs normales
+            if (input.type === 'file') {
+                input.parentElement.style.borderColor = '#e74c3c';
+                setTimeout(() => input.parentElement.style.borderColor = '', 2000);
+            } else {
+                input.style.borderColor = '#e74c3c';
+                setTimeout(() => input.style.borderColor = '', 2000);
+            }
             return false;
         }
     }
@@ -92,6 +98,29 @@ function calcularRiesgo() {
         badge.innerText = `Nivel de Riesgo: ALTO/CRÍTICO (Puntuación: ${score})`;
     }
 }
+
+// === INTERACTIVIDAD DE SUBIDA DE ARCHIVOS ===
+const fileInputs = document.querySelectorAll('.file-input');
+fileInputs.forEach(input => {
+    // Cuando el mouse entra (Drag & Drop visual)
+    input.addEventListener('dragenter', () => input.parentElement.classList.add('is-active'));
+    input.addEventListener('dragleave', () => input.parentElement.classList.remove('is-active'));
+    input.addEventListener('drop', () => input.parentElement.classList.remove('is-active'));
+    
+    // Cuando se selecciona un archivo
+    input.addEventListener('change', function() {
+        const msgSpan = this.previousElementSibling;
+        if (this.files && this.files.length > 1) {
+            msgSpan.innerText = `✅ ${this.files.length} archivos seleccionados`;
+            msgSpan.style.color = '#002b5c';
+        } else if (this.files && this.files.length === 1) {
+            msgSpan.innerText = `✅ Archivo cargado: ${this.files[0].name}`;
+            msgSpan.style.color = '#002b5c';
+        } else {
+            msgSpan.innerText = 'Arrastra y suelta tus archivos aquí o haz clic para subir';
+        }
+    });
+});
 
 document.getElementById('rfcForm').addEventListener('submit', function(e) {
     e.preventDefault();
