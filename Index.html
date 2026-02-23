@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Cambios TI - UMG</title>
     <link rel="stylesheet" href="styles.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
 
@@ -129,20 +131,20 @@
                 
                 <div class="form-group">
                     <label>Pruebas realizadas o acciones ejecutadas <span class="req">*</span></label>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte capturas de pantalla, logs de pruebas en QA o el script ejecutado. (Requerido)</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte imágenes o archivos PDF. Puede subir más de un documento. (Requerido)</p>
                     <div class="file-drop-area">
-                        <span class="file-msg">📁 Arrastra y suelta tus archivos aquí o haz clic para subir</span>
-                        <input class="file-input" type="file" id="evidenciaPrincipal" accept="image/*,.pdf,.doc,.docx,.txt" multiple required>
+                        <span class="file-msg">📁 Arrastra y suelta tus imágenes o PDFs aquí</span>
+                        <input class="file-input" type="file" id="evidenciaPrincipal" accept="image/*, application/pdf" multiple required>
                     </div>
                     <div class="preview-container" id="previewPrincipal"></div>
                 </div>
 
                 <div class="form-group" style="margin-top: 2rem;">
                     <label>Áreas 3ras participantes, evidencias</label>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte correos de aprobación de proveedores o actas de otras áreas involucradas. (Opcional)</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0; margin-bottom: 10px;">Adjunte imágenes o PDFs de correos o actas de aprobación. (Opcional)</p>
                     <div class="file-drop-area">
-                        <span class="file-msg">📎 Arrastra y suelta tus archivos aquí o haz clic para subir</span>
-                        <input class="file-input" type="file" id="evidenciaTerceros" accept="image/*,.pdf,.doc,.docx,.txt" multiple>
+                        <span class="file-msg">📎 Arrastra y suelta tus imágenes o PDFs aquí</span>
+                        <input class="file-input" type="file" id="evidenciaTerceros" accept="image/*, application/pdf" multiple>
                     </div>
                     <div class="preview-container" id="previewTerceros"></div>
                 </div>
